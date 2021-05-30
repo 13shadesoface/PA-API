@@ -1,0 +1,24 @@
+{
+  "name": "listeclients",
+  "version": "1.0.0",
+  "description": "",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server",
+    "dev": "nodemon server"
+  },
+  "author": "Elisabeth FAUQUET",
+  "license": "ISC",
+  "devDependencies": {
+    "jsdoc": "*",
+    "nodemon": "*",
+    "swagger-jsdoc": "5.0.1",
+    "swagger-ui-express": "*"
+  },
+  "dependencies": {
+    "body-parser": "*",
+    "express": "*",
+    "mysql": "*",
+    "node-fetch": "^2.6.1"
+  }
+}
