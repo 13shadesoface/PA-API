@@ -6,7 +6,7 @@ server.use(bodyParser.json());
 
 var userManagement = require('./routes/userManagement');
 var productManagement = require('./routes/productManagement');
-
+var dealManagement = require('./routes/dealManagement');
 const {httpError} = require('./errorHandler/errors');
 
 const swaggerJSDoc = require('swagger-jsdoc');
@@ -33,6 +33,7 @@ server.use('/docs', swaggerUi.serve, swaggerUi.setup(swaggerSpec));
  */
 server.use('/userManagement', userManagement);
 server.use('/productManagement', productManagement);
+server.use('/dealManagement',dealManagement);
 /**
  * Route used to check server health, answers with a 'ok' message
  */

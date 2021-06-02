@@ -1,19 +1,5 @@
-var mysql = require('mysql');
-const utils = require('../utils');
+const pool = require('./pool');
 const {httpError} = require('../errorHandler/errors');
-
-var pool = mysql.createPool({
-    connectionLimit: 10,
-    host     : 'localhost',
-    user     : 'Test',
-    password : 'testroot',
-    database: 'PA'
-});
-pool.on('release', function (connection) {
-    console.log('Connection %d released', connection.threadId);
-});
-
-pool.on('error',(error)=> {console.log(error);})
 
 const neccessaryFields = [
   "name",
