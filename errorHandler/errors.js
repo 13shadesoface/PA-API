@@ -1,28 +1,12 @@
-/**
- * error class used for internal errors, 500 http code
- */
-class internalError extends Error {
-    httpCode;
-    constructor(msg){
-        super(msg);
-        this.httpCode = 500;
-    }
-}
 
-/**
- * error class used for bad request, 400 http code
- */
-class badRequestError extends Error {
+class httpError extends Error{
     httpCode;
-    specificCode;
-    constructor(specificCode, msg){
+    constructor(msg,httpCode){
         super(msg);
-        this.httpCode = 400;
-        this.specificCode = specificCode;
+        this.httpCode = httpCode;
     }
 }
 
 module.exports = {
-    internalError,
-    badRequestError
+    httpError
 }

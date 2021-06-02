@@ -15,11 +15,21 @@ router.post('/', async (req,res,next) => {
 });
 
 router.get('/', async (req,res,next) => {
-    console.log("POST on userManagement");
-    var newUser = req.body;
+    console.log("GET on userManagement");
     try {
         const success = await User.findAll();
-        res.status(201).json(success);
+        res.status(200).json(success);
+    } catch (err) {
+        next(err);
+    }
+});
+
+
+router.get('/:id', async (req,res,next) => {
+    console.log("GET on userManagement");
+    try {
+        const success = await User.findOne(req.params.id);
+        res.status(200).json(success);
     } catch (err) {
         next(err);
     }

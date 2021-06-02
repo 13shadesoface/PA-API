@@ -5,8 +5,9 @@ var bodyParser = require('body-parser');
 server.use(bodyParser.json());
 
 var userManagement = require('./routes/userManagement');
+var productManagement = require('./routes/productManagement');
 
-const {internalError,badRequestError} = require('./errorHandler/errors');
+const {httpError} = require('./errorHandler/errors');
 
 const swaggerJSDoc = require('swagger-jsdoc');
 const swaggerUi = require('swagger-ui-express');
@@ -31,7 +32,7 @@ server.use('/docs', swaggerUi.serve, swaggerUi.setup(swaggerSpec));
  * GET and POST, see ./routes/userManagement
  */
 server.use('/userManagement', userManagement);
-
+server.use('/productManagement', productManagement);
 /**
  * Route used to check server health, answers with a 'ok' message
  */
@@ -45,10 +46,8 @@ server.get('/health', (req, res) => {
  */
 server.use((err,req,res,next) => {
     console.error(err);
-    if (err instanceof badRequestError) {
-        res.status(err.httpCode).json({'errorTypeCode':err.specificCode,'message':err.message});
-    }else if (err instanceof internalError) { 
-        res.status(err.httpCode).json({'errorTypeCode':err.httpCode,'message':err.message});
+    if (err instanceof httpError) {
+        res.status(err.httpCode).json({'message':err.message});
     }else{
         next(err);
     }

@@ -17,10 +17,12 @@ pool.on('error',(error)=> {console.log(error);})
 
 const neccessaryFields = [
   "name",
-  "firstName",
-  "title",
-  "email",
-  "phone"
+  "description",
+  "price",
+  "stockAddressID",
+  "userID",
+  "brandID",
+  "categoryID"
 ]
 
 function findAll(){
@@ -29,7 +31,7 @@ function findAll(){
             if (err) reject(new httpError('Could not connect to database',500));
             console.log('connected to mysql as id ' + connection.threadId);
             // Use the connection
-            connection.query('SELECT * FROM users', function (error, results, fields) {
+            connection.query('SELECT * FROM products', function (error, results, fields) {
               // When done with the connection, release it.
               connection.release();
               // Handle error after the release.
@@ -46,11 +48,11 @@ function findOne(id){
         if (err) reject(new httpError('Could not connect to database',500));
         console.log('connected to mysql as id ' + connection.threadId);
         // Use the connection
-        connection.query('SELECT * FROM users WHERE userID=?',id, function (error, results, fields) {
+        connection.query('SELECT * FROM products WHERE productID=?',id, function (error, results, fields) {
           // When done with the connection, release it.
           connection.release();
           // Handle error after the release.
-          if (results.length === 0) reject(new httpError('No user with given id found in the database',400))
+          if (results.length === 0) reject(new httpError('No product with given id found in the database',400))
           if (error) reject(new httpError('SQL error code :' + err.code,500));
           resolve(results[0]);
         });
@@ -58,10 +60,10 @@ function findOne(id){
 });
 }
 
-function addOne(newUser){
+function addOne(newProduct){
   return new Promise(async (resolve,reject) => {
     for (const key of neccessaryFields) {
-      if (newUser[key] == undefined || newUser[key] == null || newUser[key] === "") {
+      if (newProduct[key] == undefined || newProduct[key] == null || newProduct[key] === "") {
         reject(new httpError(`${key} is neccessary`,400));
       }
     }
@@ -72,26 +74,39 @@ function addOne(newUser){
       console.log('connected to mysql as id ' + connection.threadId);
       // Use the connection
 
-      connection.query('INSERT INTO USERS SET ?', newUser, function (err, res, fields) {
+      connection.query('INSERT INTO products SET ?', newProduct, function (err, res, fields) {
         // When done with the connection, release it.
         connection.release();
         // Handle error after the release.
-        if (err){
-          if (err.code == "ER_DUP_ENTRY") {
-            reject(new httpError('a user with the same email already exists',400));
-          }else{
-            reject(new httpError('SQL error code : ' + err.code),500);
-          }
-        } 
+        if (err)  reject(new httpError('SQL error code : ' + err.code,500));
         else resolve(res.insertId);
       });
     });
   });
 }
 
+function updateOne(id,status){
+  return new Promise((resolve,reject) => {
+    pool.getConnection((err, connection) => {
+        if (err) reject(new httpError('Could not connect to database',500));
+        console.log('connected to mysql as id ' + connection.threadId);
+        // Use the connection
+        connection.query('UPDATE products SET status=? WHERE productID=?',[status,id], function (error, result, fields) {
+          // When done with the connection, release it.
+          connection.release();
+          console.log(result);
+          // Handle error after the release.
+          if (result.affectedRows === 0) reject(new httpError('Could not find product with given id, no changes made',400))
+          if (error) reject(new httpError('SQL error code :' + err.code,500));
+          resolve();
+        });
+      });
+});
+}
 
 module.exports = {
     findAll,
     findOne,
-    addOne
+    addOne,
+    updateOne
 };
